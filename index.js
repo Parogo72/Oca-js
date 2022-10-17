@@ -201,3 +201,4 @@ function main() {
     }
     console.log("HA GANADO EL JUGADOR " + jugadores[indexJugador].value)
 }
+
