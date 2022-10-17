@@ -1,204 +1,200 @@
-const NUM_CASILLAS = 63;
-const CASILLA_PARTIDA = 1;
-const CASILLA_PUENTE_1 = 6;
-const CASILLA_PUENTE_2 = 12;
-const CASILLA_DADOS_1 = 26;
-const CASILLA_DADOS_2 = 53;
-const CASILLA_POSADA = 19;
-const CASILLA_PRISION = 52;
-const CASILLA_POZO = 31;
-const CASILLA_LABERINTO = 42;
-const CASILLA_MUERTE = 58;
-const TURNOS_POSADA = 1;
-const TURNOS_PRISION = 2;
-const TURNOS_POZO = 3;
-const PENALIZACION_LABERINTO = 12;
-const DADO_MAXIMO = 6;
-const DADO_MINIMO = 1;
-const NUMERO_JUGADORES_MIN = 1;
-const NUMERO_JUGADORES_MAX = 2;
-const MODO_DEBUGS = true;
+const TilesNumber = 63;
+const StartingTile = 1;
+const BridgeTile1 = 6;
+const BridgeTile2 = 12;
+const DiceTile1 = 26;
+const DiceTile2 = 53;
+const IncTile = 19;
+const PrisonTile = 52;
+const WellTile = 31;
+const MazeTile = 42;
+const DeathTile = 58;
+const IncPenalty = 1;
+const PrisonPenalty = 2;
+const WellPenalty = 3;
+const MazePenalty = 12;
+const MaxDice = 6;
+const MinDice = 1;
 
-class Casilla {
+class Tile {
     constructor(num) {
         this.value = num;
     }
-    esOca() {
+    isGoose() {
         return (this.value % 9 == 0 || this.value % 9 == 5);
     }
     
-    esPuente() {
-        return this.value == CASILLA_PUENTE_1 || this.value == CASILLA_PUENTE_2;
+    isBridge() {
+        return this.value == BridgeTile1 || this.value == BridgeTile2;
     }
     
-    esDados() {
-        return this.value == CASILLA_DADOS_1 || this.value == CASILLA_DADOS_2;
+    isDice() {
+        return this.value == DiceTile1 || this.value == DiceTile2;
     }
     
-    esLaberinto() {
-        return this.value == CASILLA_LABERINTO;
+    isMaze() {
+        return this.value == MazeTile;
     }
     
-    esMuerte() {
-        return this.value == CASILLA_MUERTE;
+    isDeath() {
+        return this.value == DeathTile;
     }
     
-    esPosada() {
-        return this.value == CASILLA_POSADA;
+    isInc() {
+        return this.value == IncTile;
     }
     
-    esPrision() {
-        return this.value == CASILLA_PRISION;
+    isPrison() {
+        return this.value == PrisonTile;
     }
     
-    esPozo() {
-        return this.value == CASILLA_POZO;
+    isWell() {
+        return this.value == WellTile;
     }
 
-    siguienteOca() {
+    nextGoose() {
         return this.value + (this.value % 9 == 0 ? 5 : 4);
     }
     
-    siguientePuente() {
-        return this.value == CASILLA_PUENTE_1 ? CASILLA_PUENTE_2 : CASILLA_PUENTE_1;
+    nextBridge() {
+        return this.value == BridgeTile1 ? BridgeTile2 : BridgeTile1;
     }
     
-    siguienteDado() {
-        return this.value == CASILLA_DADOS_1 ? CASILLA_DADOS_2 : CASILLA_DADOS_1;
+    nextDice() {
+        return this.value == DiceTile1 ? DiceTile2 : DiceTile1;
     }
     
-    siguienteLaberinto() {
-        return this.value - PENALIZACION_LABERINTO;
+    nextMaze() {
+        return this.value - MazePenalty;
     }
     
-    siguienteMuerte() {
-        return CASILLA_PARTIDA;
+    nextDeath() {
+        return StartingTile;
     }
 
-    efectoCasilla() {
+    tileEffect() {
         let newTile = this.value;
         if(this.value === 63) {
             return newTile;
-        } else if (this.esOca()) {
-			newTile = this.siguienteOca();
+        } else if (this.isGoose()) {
+			newTile = this.nextGoose();
 			console.log("SALTAS A LA SIGUIENTE OCA EN LA CASILLA: " + newTile);
 		}
-		else if (this.esPuente()) {
-			newTile = this.siguientePuente();
+		else if (this.isBridge()) {
+			newTile = this.nextBridge();
 			console.log("DE PUENTE EN PUENTE Y TIRO PORQUE ME LLEVA LA CORRIENTE");
 			console.log("SALTAS AL PUENTE EN LA CASILLA: " + newTile);
 		}
-		else if (this.esDados()) {
-			newTile = this.siguienteDado();
+		else if (this.isDice()) {
+			newTile = this.nextDice();
 			console.log("DE DADO A DADO Y TIRO PORQUE ME HA TOCADO ");
 			console.log("SALTAS AL SIGUIENTE DADO EN LA CASILLA: " + newTile);
 		}
-		else if (this.esLaberinto()) {
-			newTile = this.siguienteLaberinto();
+		else if (this.isMaze()) {
+			newTile = this.nextMaze();
 			console.log("HAS CAIDO EN EL LABERINTO");
 			console.log("RETROCEDES A LA CASILLA " + newTile);
 		}
-		else if (this.esPosada()) {
+		else if (this.isInc()) {
 			newTile = this.value;
 			console.log("HAS CAIDO EN LA POSADA");
 		}
-		else if (this.esPrision()) {
+		else if (this.isPrison()) {
 			newTile = this.value;
 			console.log("HAS CAIDO EN LA PRISION");
 		}
-		else if (this.esPozo()) {
+		else if (this.isWell()) {
 			newTile = this.value;
 			console.log("HAS CAIDO EN EL POZO");
 		}
-		else if (this.esMuerte()) {
-			newTile = this.siguienteMuerte();
+		else if (this.isDeath()) {
+			newTile = this.nextDeath();
 			console.log("HAS CAIDO EN LA MUERTE");
 			console.log("VUELVES A LA CASILLA " + newTile);
 		}
         return newTile;
     }
 
-    efectoTiradas() {
-        let penalizacion = 0;
+    throwEffect() {
+        let penalty = 0;
         let extra = false;
-        if (this.esOca()) {
+        if (this.isGoose()) {
             extra = true;
         }
-        else if (this.esPuente()) {
+        else if (this.isBridge()) {
             extra = true;
         }
-        else if (this.esDados()) {
+        else if (this.isDice()) {
             extra = true;
         }
-        else if (this.esPosada()) {
-            penalizacion += TURNOS_POSADA;
+        else if (this.isInc()) {
+            penalty += IncPenalty;
         }
-        else if (this.esPrision()) {
-            penalizacion += TURNOS_PRISION;
+        else if (this.isPrison()) {
+            penalty += PrisonPenalty;
         }
-        else if (this.esPozo()) {
-            penalizacion += TURNOS_POZO;
+        else if (this.isWell()) {
+            penalty += WellPenalty;
         }
-        return { extra, penalizacion }
+        return { extra, penalty }
     }
 }
 
-const mapa = new Array(NUM_CASILLAS + 1).fill(1).map((e, i) => new Casilla(i));
+const map = new Array(TilesNumber + 1).fill(1).map((e, i) => new Tile(i));
 
-class Jugador { 
+class Player { 
     constructor(num) {
         this.value = num + 1;
-        this.casilla = CASILLA_PARTIDA;
+        this.tile = StartingTile;
         this.turnosPenalizacion = 0;
-        this.mapa = mapa
+        this.map = map
     }
     win() {
-        return this.casilla >= NUM_CASILLAS;
+        return this.tile >= TilesNumber;
     }
     tirar() {
-        if(this.penalizacion) {
-            this.penalizacion--;
+        if(this.penalty) {
+            this.penalty--;
             return;
         } 
-        console.log("CASILLA ACTUAL " + this.casilla);
-        const dado = parseInt(Math.random() * (DADO_MAXIMO - DADO_MINIMO) + DADO_MINIMO);
+        console.log("CASILLA ACTUAL " + this.tile);
+        const dado = parseInt(Math.random() * (MaxDice - MinDice) + MinDice);
         console.log("VALOR DEL DADO: " + dado)
-        this.casilla += dado;
-        console.log("PASAS A LA CASILLA " + this.casilla);
-        let casillaMapa = this.mapa[this.casilla];
-        if(!casillaMapa) return;
-        this.casilla = this.mapa[this.casilla].efectoCasilla()
-        if(this.casilla >= this.mapa.length - 1) return;
-        let tiradas = this.mapa[this.casilla].efectoTiradas()
+        this.tile += dado;
+        console.log("PASAS A LA CASILLA " + this.tile);
+        let tileMap = this.map[this.tile];
+        if(!tileMap) return;
+        this.tile = this.map[this.tile].tileEffect()
+        if(this.tile >= this.map.length - 1) return;
+        let throws = this.map[this.tile].throwEffect()
 
-        if(tiradas.extra) {
+        if(throws.extra) {
             this.tirar();
         }
-        this.penalizacion = tiradas.penalizacion;
+        this.penalty = throws.penalty;
     }
 }
 
 
-let numJugadores = 3 || prompt("Dame el numero de jugadores", 2);
+let numPlayers = 3 || prompt("Dame el numero de players", 2);
 
-let jugadores = new Array(numJugadores).fill(1).map((e, i) => new Jugador(i))
+let players = new Array(numPlayers).fill(1).map((e, i) => new Player(i))
 
-let indexJugador = 0;
+let indexPlayer = 0;
 function main() {
-    while(!jugadores.some(e => e.win())) { 
-        let jugadorActual = jugadores[indexJugador];
-        if(!jugadorActual.penalizacion) {
-            console.log("\n" + "TURNO DEL JUGADOR " + jugadorActual.value + "\n");
+    while(!players.some(e => e.win())) { 
+        let mainPlayer = players[indexPlayer];
+        if(!mainPlayer.penalty) {
+            console.log("\n" + "TURNO DEL JUGADOR " + mainPlayer.value + "\n");
         }
-        jugadorActual.tirar();
-        if(!jugadores.some(e => e.win())) {
-            if(jugadores.length - 1 === indexJugador) {
-                indexJugador = 0;
+        mainPlayer.tirar();
+        if(!players.some(e => e.win())) {
+            if(players.length - 1 === indexPlayer) {
+                indexPlayer = 0;
             } else {
-                indexJugador++;
+                indexPlayer++;
             }
         }
     }
-    console.log("HA GANADO EL JUGADOR " + jugadores[indexJugador].value)
+    console.log("HA GANADO EL JUGADOR " + players[indexPlayer].value)
 }
-
