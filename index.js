@@ -140,10 +140,10 @@ class Tile {
     }
 }
 
-const map = new Array(TilesNumber + 1).fill(1).map((e, i) => new Tile(i));
+
 
 class Player { 
-    constructor(num) {
+    constructor(num, map) {
         this.value = num + 1;
         this.tile = StartingTile;
         this.turnosPenalizacion = 0;
@@ -152,15 +152,15 @@ class Player {
     win() {
         return this.tile >= TilesNumber;
     }
-    tirar() {
+    throw() {
         if(this.penalty) {
             this.penalty--;
             return;
         } 
         console.log("CASILLA ACTUAL " + this.tile);
-        const dado = parseInt(Math.random() * (MaxDice - MinDice) + MinDice);
-        console.log("VALOR DEL DADO: " + dado)
-        this.tile += dado;
+        const dice = parseInt(Math.random() * (MaxDice - MinDice) + MinDice);
+        console.log("VALOR DEL DADO: " + dice)
+        this.tile += dice;
         console.log("PASAS A LA CASILLA " + this.tile);
         let tileMap = this.map[this.tile];
         if(!tileMap) return;
@@ -169,25 +169,25 @@ class Player {
         let throws = this.map[this.tile].throwEffect()
 
         if(throws.extra) {
-            this.tirar();
+            this.throw();
         }
         this.penalty = throws.penalty;
     }
 }
 
 
-let numPlayers = 3 || prompt("Dame el numero de players", 2);
 
-let players = new Array(numPlayers).fill(1).map((e, i) => new Player(i))
-
-let indexPlayer = 0;
 function main() {
+    let numPlayers = 7 || prompt("Dame el numero de players", 2);
+    const map = new Array(TilesNumber + 1).fill(1).map((e, i) => new Tile(i));
+    let players = new Array(numPlayers).fill(1).map((e, i) => new Player(i, map))
+    let indexPlayer = 0;
     while(!players.some(e => e.win())) { 
         let mainPlayer = players[indexPlayer];
         if(!mainPlayer.penalty) {
             console.log("\n" + "TURNO DEL JUGADOR " + mainPlayer.value + "\n");
         }
-        mainPlayer.tirar();
+        mainPlayer.throw();
         if(!players.some(e => e.win())) {
             if(players.length - 1 === indexPlayer) {
                 indexPlayer = 0;
