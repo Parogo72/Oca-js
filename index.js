@@ -177,8 +177,7 @@ class Player {
 
 
 
-function main() {
-    let numPlayers = 7 || prompt("Dame el numero de players", 2);
+function main(numPlayers) {
     const map = new Array(TilesNumber + 1).fill(1).map((e, i) => new Tile(i));
     let players = new Array(numPlayers).fill(1).map((e, i) => new Player(i, map))
     let indexPlayer = 0;
